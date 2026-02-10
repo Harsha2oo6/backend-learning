@@ -20,13 +20,42 @@ def get_questions(request):
 
     return JsonResponse({"questions": data})
 
+def update_question(request):
+    body = json.loads(request.body)
+    id = body.get("id")
+    text = body.get("text")
+
+    q = Question.objects.get(id=id)
+    q.text = text
+    q.save()
+    return JsonResponse({"id": q.id, "text": q.text})
+
+def delete_question(request):
+    body = json.loads(request.body)
+    id = body.get("id")
+    q = Question.objects.get(id=id)
+    q.delete()
+    return JsonResponse({"message": "Question deleted"})
 
 @csrf_exempt
 def create_question(request):
-    if request.method == "POST":
-        body = json.loads(request.body)
-        text = body.get("text")
+    body = json.loads(request.body)
+    text = body.get("text")
 
-        q = Question.objects.create(text=text)
+    q = Question.objects.create(text=text)
 
-        return JsonResponse({"id": q.id, "text": q.text})
+    return JsonResponse({"id": q.id, "text": q.text})
+
+def question_operations(request):
+    method = request.method
+    match method:
+        case "GET":
+            return get_questions(request)
+        case "POST":
+            return create_question(request)
+        case "PUT":
+            return update_question(request)
+        case "DELETE":
+            return delete_question(request)
+        case _:
+            return JsonResponse({"error": "Method not allowed"}, status=405)
