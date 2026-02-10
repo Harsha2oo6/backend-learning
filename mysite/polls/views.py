@@ -37,7 +37,6 @@ def delete_question(request):
     q.delete()
     return JsonResponse({"message": "Question deleted"})
 
-@csrf_exempt
 def create_question(request):
     body = json.loads(request.body)
     text = body.get("text")
@@ -46,6 +45,7 @@ def create_question(request):
 
     return JsonResponse({"id": q.id, "text": q.text})
 
+@csrf_exempt
 def question_operations(request):
     method = request.method
     match method:
