@@ -1,12 +1,17 @@
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from .models import Question
+from .models import Question, Answer
 
 def hello_api(request):
     return JsonResponse({"message": "Hello API working"})
 
-
+def get_answers(request, question_id):
+    answers = Answer.objects.filter(question_id=question_id)
+    print("answers",answers.values())
+    return JsonResponse({
+        "answers": list(answers.values())
+    })
 def get_questions(request):
     questions = Question.objects.all()
 
